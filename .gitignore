@@ -1,5 +1,6 @@
 .idea/
 .DS_Store
 spawn-workshops-ec2/.terraform/
-spawn-workshops-ec2/ssh-pubkeys/
+
 terraform.tfstate*
+ssh-pubkeys/*
