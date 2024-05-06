@@ -1,4 +1,4 @@
-name: Publish Spring Boot image for smoke tests
+name: Build & Publish Stronghold image
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '21'
-          distribution: 'eclipse-temurin'
+          distribution: 'temurin'
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
