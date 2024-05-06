@@ -14,7 +14,7 @@ resource "local_file" "private_key" {
   for_each = toset(var.ec2_instances)
 
   content  = tls_private_key.private_key[each.key].private_key_openssh
-  filename = "${path.module}/ssh-pubkeys/${each.key}/ssh-${each.key}.key"
+  filename = "${local.ssh_generation_folder}/${each.key}/ssh.key"
   file_permission = "0600"
 }
 
@@ -22,9 +22,23 @@ resource "local_file" "instance_address" {
   for_each = toset(var.ec2_instances)
 
   content  = aws_instance.cilium-workshop-instance[each.key].public_dns
-  filename = "${path.module}/ssh-pubkeys/${each.key}/instance-address"
+  filename = "${local.ssh_generation_folder}/${each.key}/instance-address"
 }
 
+
+resource "local_file" "powershell_run_script" {
+  for_each = toset(var.ec2_instances)
+
+  content  = file("${path.module}/scripts/ssh-session.ps1")
+  filename = "${local.ssh_generation_folder}/${each.key}/ssh-session.ps1"
+}
+
+resource "local_file" "bash_run_script" {
+  for_each = toset(var.ec2_instances)
+
+  content  = file("${path.module}/scripts/ssh-session.sh")
+  filename = "${local.ssh_generation_folder}/${each.key}/ssh-session.sh"
+}
 
 resource "aws_security_group" "cilium-workshop-instance-security-group" {
   for_each = toset(var.ec2_instances)
