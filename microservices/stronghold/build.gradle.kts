@@ -54,6 +54,9 @@ jib {
 			os = "linux"
 		}
 	}
-	to.image = "ghcr.io/vmaleze/cilium-hands-on/stronghold:$tag"
+	to {
+		image = "ghcr.io/vmaleze/cilium-hands-on/stronghold"
+		tags = setOf("$tag", "latest")
+	}
 	container.ports = listOf("8080")
 }

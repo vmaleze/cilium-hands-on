@@ -56,6 +56,9 @@ jib {
 			os = "linux"
 		}
 	}
-	to.image = "ghcr.io/vmaleze/cilium-hands-on/unit:$tag"
+	to {
+		image = "ghcr.io/vmaleze/cilium-hands-on/unit"
+		tags = setOf("$tag", "latest")
+	}
 	container.ports = listOf("8080")
 }
