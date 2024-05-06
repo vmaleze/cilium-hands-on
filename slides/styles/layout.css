@@ -1,0 +1,56 @@
+.slidev-layout {
+
+    h1 {
+        @apply text-4xl mb-4 text-sky-600;
+    }
+
+    h1.over-image{
+        @apply text-white font-bold bg-sky-600 bg-op-80 rounded-full p-5;
+    }
+
+    ul {
+        @apply list-disc
+    }
+
+    ul li::marker{
+        @apply text-sky-600;
+    }
+
+    ul.green {
+        @apply list-none;
+    }
+
+    ul.green li::marker{
+        @apply text-green-600;
+    }
+
+    .absolute-center {
+        @apply absolute;
+        @apply left-1/2 top-1/2;
+        @apply -translate-x-1/2 -translate-y-1/2
+    }
+
+    kbd {
+        @apply text-lg
+    }
+
+    pre {
+        @apply !text-lg;
+    }
+}
+
+.slidev-layout.cover {
+    @apply -z-2
+}
+
+.slidev-layout.two-cols-header {
+    @apply grid-rows-none
+
+    .col-header {
+        @apply h-1/7
+    }
+}
+
+.slidev-layout.about-me {
+    @apply mt-0 mb-0 line-height-6
+}
