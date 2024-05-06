@@ -20,9 +20,10 @@ resource "local_file" "private_key" {
 
 resource "local_file" "instance_address" {
   for_each = toset(var.ec2_instances)
-
+  depends_on = [ aws_instance.cilium-workshop-instance ]
   content  = aws_instance.cilium-workshop-instance[each.key].public_dns
   filename = "${local.ssh_generation_folder}/${each.key}/instance-address"
+  file_permission = "0600"
 }
 
 
@@ -61,6 +62,29 @@ resource "aws_vpc_security_group_ingress_rule" "cilium-workshop-instance-ingress
   to_port     = 22
 }
 
+
+resource "aws_vpc_security_group_ingress_rule" "cilium-workshop-instance-ingress-rule-http" {
+  for_each = toset(var.ec2_instances)
+  security_group_id = aws_security_group.cilium-workshop-instance-security-group[each.key].id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  ip_protocol = "tcp"
+  to_port     = 80
+}
+
+
+
+resource "aws_vpc_security_group_ingress_rule" "cilium-workshop-instance-ingress-rule-https" {
+  for_each = toset(var.ec2_instances)
+  security_group_id = aws_security_group.cilium-workshop-instance-security-group[each.key].id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 443
+  ip_protocol = "tcp"
+  to_port     = 443
+}
+
 resource "aws_vpc_security_group_egress_rule" "cilium-workshop-instance-egress-rule-http" {
   for_each = toset(var.ec2_instances)
   security_group_id = aws_security_group.cilium-workshop-instance-security-group[each.key].id
@@ -85,7 +109,7 @@ resource "aws_vpc_security_group_egress_rule" "cilium-workshop-instance-egress-r
 resource "aws_instance" "cilium-workshop-instance" {
   for_each = toset(var.ec2_instances)
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t2.medium"
   key_name      = aws_key_pair.generated_key[each.key].key_name
 
   security_groups = [aws_security_group.cilium-workshop-instance-security-group[each.key].name]
@@ -97,5 +121,32 @@ resource "aws_instance" "cilium-workshop-instance" {
 
   user_data = file("${path.module}/scripts/init-install.sh")
   user_data_replace_on_change = true
+
+  provisioner "remote-exec" {
+    inline = [
+      "ln -s /tmp/helpers ~/helpers",
+      "mkdir ~/.kube"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = tls_private_key.private_key[each.key].private_key_openssh
+      host        = "${self.public_dns}"
+    }
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/helpers"
+    destination = "/tmp/helpers"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = tls_private_key.private_key[each.key].private_key_openssh
+      host        = "${self.public_dns}"
+    }
+  }
+
 }
 
