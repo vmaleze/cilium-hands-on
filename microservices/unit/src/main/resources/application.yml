@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: unit
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: never
+
+application:
+  stronghold-url: ${STRONGHOLD_URL:http://localhost:8081/}

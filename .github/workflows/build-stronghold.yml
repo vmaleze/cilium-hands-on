@@ -1,0 +1,37 @@
+name: Publish Spring Boot image for smoke tests
+
+on:
+  push:
+    paths:
+      - 'microservices/stronghold**'
+      - '.github/workflows/build-stronghold.yml'
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK for running Gradle
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'eclipse-temurin'
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set tag
+        run: echo "TAG=$(date '+%Y%m%d').$GITHUB_RUN_ID" >> $GITHUB_ENV
+
+      - name: Build Java 21 Docker image
+        working-directory: microservices/stronghold
+        run: ./gradlew :jib -Ptag=${{ env.TAG }} -Djib.httpTimeout=120000 -Djib.console=plain
