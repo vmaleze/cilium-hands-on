@@ -3,4 +3,4 @@
 spawn-workshops-ec2/.terraform/
 
 terraform.tfstate*
-ssh-pubkeys/*
+generated/
