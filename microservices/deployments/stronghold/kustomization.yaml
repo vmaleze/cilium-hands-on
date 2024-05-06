@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+
+namePrefix: stronghold-
+
+commonLabels:
+  app: stronghold
+
+images:
+  - name: ghcr.io/vmaleze/cilium-hands-on/none
+    newName: ghcr.io/vmaleze/cilium-hands-on/stronghold
+    newTag: 1.0.0
+
+generatorOptions:
+  disableNameSuffixHash: true

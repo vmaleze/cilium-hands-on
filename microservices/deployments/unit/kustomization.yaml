@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../base
+
+images:
+- name: ghcr.io/vmaleze/cilium-hands-on/none
+  newName: ghcr.io/vmaleze/cilium-hands-on/unit
+  newTag: 1.0.0
+
+configMapGenerator:
+- envs:
+  - .env
+  name: unit-cm
+
+generatorOptions:
+  disableNameSuffixHash: true

@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("com.squareup.retrofit2:retrofit:2.11.0")
 	implementation("com.squareup.retrofit2:converter-jackson:2.11.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
