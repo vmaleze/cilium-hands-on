@@ -2,22 +2,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: stronghold
-  name: stronghold
+  name: simple-stronghold
   namespace: azeroth
+  labels:
+    class: stronghold
+    version: v1
+    app.kubernetes.io/name: simple-stronghold
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stronghold
+      class: stronghold
+      version: v1
+      app.kubernetes.io/name: simple-stronghold
   template:
     metadata:
       labels:
-        app: stronghold
+        class: stronghold
+        version: v1
+        app.kubernetes.io/name: simple-stronghold
     spec:
       containers:
         - image: ghcr.io/vmaleze/cilium-hands-on/stronghold:1.0.0
+          name: stronghold
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
@@ -25,7 +32,6 @@ spec:
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
-          name: app
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -37,10 +43,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: stronghold
   name: stronghold
   namespace: azeroth
+  labels:
+    class: stronghold
 spec:
   ports:
     - name: http
@@ -48,5 +54,27 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: stronghold
+    class: stronghold
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-stronghold
+  namespace: azeroth
+  labels:
+    class: stronghold
+    version: v1
+    app.kubernetes.io/name: simple-stronghold
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    class: stronghold
+    version: v1
+    app.kubernetes.io/name: simple-stronghold
   type: ClusterIP

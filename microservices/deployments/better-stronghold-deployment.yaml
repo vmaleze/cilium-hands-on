@@ -2,30 +2,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orc
+  name: better-stronghold
   namespace: azeroth
   labels:
-    app.kubernetes.io/name: orc
+    class: stronghold
+    version: v2
+    app.kubernetes.io/name: better-stronghold
 spec:
   replicas: 1
   selector:
     matchLabels:
-      class: orc
+      class: stronghold
+      version: v2
+      app.kubernetes.io/name: better-stronghold
   template:
     metadata:
       labels:
-        class: orc
-        app.kubernetes.io/name: orc
+        class: stronghold
+        version: v2
+        app.kubernetes.io/name: better-stronghold
     spec:
       containers:
-        - image: ghcr.io/vmaleze/cilium-hands-on/unit:1.0.0
-          name: unit
+        - image: ghcr.io/vmaleze/cilium-hands-on/stronghold:2.0.0
+          name: stronghold
           imagePullPolicy: Always
-          env:
-            - name: STRONGHOLD_URL
-              value: http://stronghold:8080
-            - name: UNIT
-              value: orc
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -38,15 +38,16 @@ spec:
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orc
+  name: better-stronghold
   namespace: azeroth
   labels:
-    app.kubernetes.io/name: orc
+    class: stronghold
+    version: v2
+    app.kubernetes.io/name: better-stronghold
 spec:
   ports:
     - name: http
@@ -54,5 +55,7 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    class: orc
+    class: stronghold
+    version: v2
+    app.kubernetes.io/name: better-stronghold
   type: ClusterIP

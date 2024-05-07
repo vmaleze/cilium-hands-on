@@ -8,6 +8,6 @@ k3d cluster create --agents 2 --k3s-arg "--disable-network-policy@server:*" --k3
 kubectl get nodes -o custom-columns=NAME:.metadata.name --no-headers=true | xargs -I {} docker exec {} mount bpffs /sys/fs/bpf -t bpf
 kubectl get nodes -o custom-columns=NAME:.metadata.name --no-headers=true | xargs -I {} docker exec {} mount --make-shared /sys/fs/bpf
 
-cilium install
+cilium install --set kubeProxyReplacement=true --set envoyConfig.enabled=true --set loadBalancer.l7.backend=envoy
 cilium hubble enable --ui
 ```
