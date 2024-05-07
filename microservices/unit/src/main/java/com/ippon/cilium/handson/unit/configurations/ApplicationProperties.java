@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
   private String strongholdUrl;
+  private String unit;
 
   public String getStrongholdUrl() {
     return strongholdUrl;
@@ -13,6 +14,15 @@ public class ApplicationProperties {
 
   public ApplicationProperties setStrongholdUrl(String strongholdUrl) {
     this.strongholdUrl = strongholdUrl;
+    return this;
+  }
+
+  public String getUnit() {
+    return unit;
+  }
+
+  public ApplicationProperties setUnit(String unit) {
+    this.unit = unit;
     return this;
   }
 }

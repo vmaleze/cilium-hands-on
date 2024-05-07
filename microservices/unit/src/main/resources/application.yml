@@ -10,3 +10,4 @@ server:
 
 application:
   stronghold-url: ${STRONGHOLD_URL:http://localhost:8081/}
+  unit: ${UNIT:orc}
