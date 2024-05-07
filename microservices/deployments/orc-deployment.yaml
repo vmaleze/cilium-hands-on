@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: orc
+  name: orc
+  namespace: azeroth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orc
+  template:
+    metadata:
+      labels:
+        app: orc
+    spec:
+      containers:
+        - image: ghcr.io/vmaleze/cilium-hands-on/unit:1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: STRONGHOLD_URL
+              value: http://stronghold:8080
+            - name: UNIT
+              value: orc
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          name: app
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: orc
+  name: orc
+  namespace: azeroth
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: orc
+  type: ClusterIP

@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stronghold
+  name: stronghold
+  namespace: azeroth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stronghold
+  template:
+    metadata:
+      labels:
+        app: stronghold
+    spec:
+      containers:
+        - image: ghcr.io/vmaleze/cilium-hands-on/stronghold:1.0.0
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          name: app
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stronghold
+  name: stronghold
+  namespace: azeroth
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: stronghold
+  type: ClusterIP
