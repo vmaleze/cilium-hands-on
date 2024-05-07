@@ -3,7 +3,7 @@ package com.ippon.cilium.handson.stronghold.models;
 import java.util.Random;
 
 public enum Weapon {
-  SWORD, AXE, STAFF;
+  SUPER_SWORD, BLOOD_AXE, MAGICAL_STAFF;
 
   private static final Random PRNG = new Random();
 

@@ -30,7 +30,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set tag
-        run: echo "TAG=1.0.0" >> $GITHUB_ENV
+        run: echo "TAG=2.0.0" >> $GITHUB_ENV
 
       - name: Build Java 21 Docker image
         working-directory: microservices/stronghold
