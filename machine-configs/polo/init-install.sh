@@ -25,3 +25,6 @@ curl -L https://vscode.download.prss.microsoft.com/dbazure/download/stable/dc96b
 
 echo "installation d'outils de debug"
 sudo apt install -y net-tools
+
+
+echo "OK" > ~/.INSTALL_OK
