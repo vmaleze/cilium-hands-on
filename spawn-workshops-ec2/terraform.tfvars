@@ -1,5 +1,5 @@
-common_prefix="vmaleze"
+common_prefix="mpayet-test"
 
 ec2_instances= [
-    "marco"
+    "polo"
 ]

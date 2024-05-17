@@ -1,0 +1,13 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: aws-cloud-controller-manager
+  namespace: kube-system
+spec:
+  chart: https://github.com/kubernetes/cloud-provider-aws/releases/download/helm-chart-aws-cloud-controller-manager-0.0.6/aws-cloud-controller-manager-0.0.6.tgz
+  targetNamespace: kube-system
+  bootstrap: true
+  valuesContent: |-
+    hostNetworking: true
+    nodeSelector:
+      node-role.kubernetes.io/master: "true"

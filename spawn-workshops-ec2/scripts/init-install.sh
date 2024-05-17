@@ -12,8 +12,13 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scrip
 chmod 700 get_helm.sh
 ./get_helm.sh
 
+echo "installation de la CLI de cilium"
+curl -L https://github.com/cilium/cilium-cli/releases/download/v0.15.0/cilium-linux-amd64.tar.gz | sudo tar xvzf - -C /usr/local/bin
 
 echo "installation de kubectx+kubens"
 sudo git clone https://github.com/ahmetb/kubectx /opt/kubectx
 sudo ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
 sudo ln -s /opt/kubectx/kubens /usr/local/bin/kubens
+
+echo "installation d'outils de debug"
+sudo apt install -y net-tools
