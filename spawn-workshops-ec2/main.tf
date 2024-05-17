@@ -18,6 +18,8 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
+
+
 resource "local_file" "instance_address" {
   for_each = toset(var.ec2_instances)
   depends_on = [ aws_instance.cilium-workshop-instance ]
@@ -26,12 +28,12 @@ resource "local_file" "instance_address" {
   file_permission = "0600"
 }
 
+resource "local_file" "create_scripts" {
 
-resource "local_file" "powershell_run_script" {
-  for_each = toset(var.ec2_instances)
+  for_each = {for script in local.scripts_to_copy: script.key => script }
 
-  content  = file("${path.module}/scripts/ssh-session.ps1")
-  filename = "${local.ssh_generation_folder}/${each.key}/ssh-session.ps1"
+  content  = each.value.content
+  filename = each.value.filename
 }
 
 resource "local_file" "bash_run_script" {
