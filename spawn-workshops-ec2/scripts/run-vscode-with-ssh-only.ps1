@@ -1,29 +1,36 @@
 #!/bin/sh -e
 
-$variable=Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-cd $variable
+$script_folder=Split-Path -Path $MyInvocation.MyCommand.Path -Parent
+cd $script_folder
 
-config=$(cat - <<EOF
-Host $(cat instance-address)
-  HostName $(cat instance-address)
+$config=@"
+Host $(Get-Content .\instance-address)
+  HostName $(Get-Content .\instance-address)
   User ubuntu
-  IdentityFile $(pwd)/ssh.key
-EOF
-)
+  IdentityFile $((Get-Location).path)/ssh.key
+"@
 
-echo "Pour pouvoir se connecter par SSH, ce script doit mettre à jour le fichier ~/.ssh/config avec le contenu suivant:
-$config"
 
-echo -n "Mettre à jour le fichier (mettre N si le fichier est déjà à jour)? (O/N): "
+Write-Output @"
+Pour pouvoir se connecter par SSH, ce script doit mettre à jour le fichier ~/.ssh/config avec le contenu suivant:
+$config
+"@
 
-read response
+$response = Read-Host "Mettre à jour le fichier (mettre N si le fichier est déjà à jour)? (O/N): "
 
-if [ "${response}" = "O" ]
-then
-    cp ~/.ssh/config ~/.ssh/config.backup$(date +%s)
-    echo "" >> ~/.ssh/config
-    echo "$config" >> ~/.ssh/config
-    echo "" >> ~/.ssh/config
-fi
+$HOME_FOLDER = "UNDEFINED"
 
-code --remote ssh-remote+ubuntu@$(cat instance-address) $* /
+if($env:USERPROFILE -ne $null) {
+  $HOME_FOLDER = $env:USERPROFILE
+} else {
+  $HOME_FOLDER = $env:HOME
+}
+
+if($response -eq "O") {
+    Copy-Item $HOME_FOLDER/.ssh/config $HOME_FOLDER/.ssh/config.backup$(Get-Date -Format "dddd-MM-dd-yyyy-HH-mm")
+    Add-Content $HOME_FOLDER/.ssh/config -Value ""
+    Add-Content $HOME_FOLDER/.ssh/config $config
+    Add-Content $HOME_FOLDER/.ssh/config -Value ""
+}
+
+code --remote ssh-remote+ubuntu@$(Get-Content .\instance-address) /
