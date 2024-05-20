@@ -29,19 +29,38 @@ resource "local_file" "instance_address" {
 }
 
 resource "local_file" "create_scripts" {
-
-  for_each = {for script in local.scripts_to_copy: script.key => script }
-
+  for_each = {for script in local.local_scripts_to_copy: script.key => script }
   content  = each.value.content
   filename = each.value.filename
 }
 
-resource "local_file" "bash_run_script" {
-  for_each = toset(var.ec2_instances)
 
-  content  = file("${path.module}/scripts/ssh-session.sh")
-  filename = "${local.ssh_generation_folder}/${each.key}/ssh-session.sh"
+data "archive_file" "distribution_zip" {
+    for_each = toset(var.ec2_instances)
+    depends_on = [ local_file.create_scripts ]
+    output_path = "${local.distribution_folder}/${each.key}.zip"
+    source_dir = "${local.ssh_generation_folder}/${each.key}"
+    type = "zip"
 }
+
+resource "null_resource" "distribution_tar_gz" {
+  #archive_file ne supporte pas les tar.gz, donc petit hack pour générer des tar.gz...
+  for_each = toset(var.ec2_instances)
+  depends_on = [ local_file.create_scripts, data.archive_file.distribution_zip ]
+  triggers = {
+    file_changed = md5("$distribution_folder/${each.key}.zip")
+  }
+  provisioner "local-exec" {
+    command = <<EOT
+      distribution_folder="$(cd "${local.distribution_folder}" && pwd)"
+      cd "${local.ssh_generation_folder}/${each.key}"
+      
+      tar cvzf - . > "$distribution_folder/${each.key}.tar.gz"
+    EOT
+    #interpreter = [ "/bin/sh" ]
+  }
+}
+
 
 resource "aws_security_group" "cilium-workshop-instance-security-group" {
   for_each = toset(var.ec2_instances)
@@ -126,7 +145,7 @@ resource "aws_instance" "cilium-workshop-instance" {
 
   provisioner "remote-exec" {
     inline = [
-      "ln -s /tmp/helpers ~/helpers",
+      "mkdir -p ~/workshop",
       "mkdir ~/.kube"
     ]
 
@@ -137,18 +156,23 @@ resource "aws_instance" "cilium-workshop-instance" {
       host        = "${self.public_dns}"
     }
   }
+}
 
+
+resource null_resource "copy_workspace" {
+  depends_on = [ aws_instance.cilium-workshop-instance ]
+  for_each = {for workspace_dirs in local.workspace_dirs_to_copy: workspace_dirs.key => workspace_dirs }
+  
   provisioner "file" {
-    source      = "${path.module}/scripts/helpers"
-    destination = "/tmp/helpers"
+    source      = "${each.value.folder}"
+    destination = "/home/ubuntu/workshop"
 
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = tls_private_key.private_key[each.key].private_key_openssh
-      host        = "${self.public_dns}"
+      private_key = tls_private_key.private_key[each.value.instance].private_key_openssh
+      host        = "${aws_instance.cilium-workshop-instance[each.value.instance].public_dns}"
     }
   }
-
-}
-
+}  
+    

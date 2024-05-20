@@ -33,4 +33,4 @@ if($response -eq "O") {
     Add-Content $HOME_FOLDER/.ssh/config -Value ""
 }
 
-code --remote ssh-remote+ubuntu@$(Get-Content .\instance-address) /
+code --remote ssh-remote+ubuntu@$(Get-Content .\instance-address) /home/ubuntu/workshop

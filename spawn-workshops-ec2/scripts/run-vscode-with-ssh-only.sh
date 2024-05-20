@@ -25,4 +25,4 @@ then
     echo "" >> ~/.ssh/config
 fi
 
-code --remote ssh-remote+ubuntu@$(cat instance-address) $* /
+code --remote ssh-remote+ubuntu@$(cat instance-address) /home/ubuntu/workshop

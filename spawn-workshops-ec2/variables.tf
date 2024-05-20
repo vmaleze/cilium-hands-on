@@ -4,3 +4,7 @@ variable "ec2_instances" {
 variable "common_prefix" {
     type = string
 }
+
+variable "folders_to_copy_in_workspace" {
+    type = list(string)
+}
