@@ -1,4 +1,3 @@
-* Write scenarios and TPs
+* Test the labs from beginning to end
 * Explain all cilium config
-* Find a way to have some rate-limiting
 * Slides (duh!)

@@ -6,16 +6,20 @@ spec:
   description: "L7 policy to restrict access to specific HTTP call"
   endpointSelector:
     matchLabels:
+      # The policy will apply to all resources with the following labels
       class: stronghold
   ingress:
     - fromEndpoints:
         - matchLabels:
+            # Only resources with the following labels are allowed to access the resource
             class: orc
       toPorts:
         - ports:
+            # Policy applies to this port
             - port: "8080"
               protocol: TCP
           rules:
             http:
+              # Policy applies to this http route
               - method: "GET"
                 path: "/weapons"

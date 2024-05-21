@@ -38,9 +38,9 @@ spec:
                 weighted_clusters:
                   clusters:
                     - name: "azeroth/simple-stronghold"
-                      weight: 70
+                      weight: 90
                     - name: "azeroth/better-stronghold"
-                      weight: 30
+                      weight: 10
                 retry_policy:
                   retry_on: 5xx
                   num_retries: 3
