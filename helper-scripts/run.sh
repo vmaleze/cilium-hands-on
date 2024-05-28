@@ -18,6 +18,6 @@ cilium status --wait
 
 kubectl -n kube-system exec ds/cilium -- cilium-dbg status | grep KubeProxyReplacement
 
-kubectl apply -f nginx-deployment.yaml
+kubectl apply -f test-deploy/nginx-deployment.yaml
 kubectl expose deployment my-nginx --type=NodePort --port=80
 kubectl get svc my-nginx

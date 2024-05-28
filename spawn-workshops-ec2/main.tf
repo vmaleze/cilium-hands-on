@@ -29,6 +29,7 @@ resource "local_file" "instance_address" {
 }
 
 resource "local_file" "create_scripts" {
+  depends_on = [ aws_instance.cilium-workshop-instance ]
   for_each = {for script in local.local_scripts_to_copy: script.key => script }
   content  = each.value.content
   filename = each.value.filename
@@ -38,7 +39,7 @@ resource "local_file" "create_scripts" {
 data "archive_file" "distribution_zip" {
     for_each = toset(var.ec2_instances)
     depends_on = [ local_file.create_scripts ]
-    output_path = "${local.distribution_folder}/${each.key}.zip"
+    output_path = "${local.distribution_folder}/${each.key}/${each.key}.zip"
     source_dir = "${local.ssh_generation_folder}/${each.key}"
     type = "zip"
 }
@@ -48,16 +49,15 @@ resource "null_resource" "distribution_tar_gz" {
   for_each = toset(var.ec2_instances)
   depends_on = [ local_file.create_scripts, data.archive_file.distribution_zip ]
   triggers = {
-    file_changed = md5("$distribution_folder/${each.key}.zip")
+    file_changed = md5("$distribution_folder/${each.key}/${each.key}.zip")
   }
   provisioner "local-exec" {
     command = <<EOT
       distribution_folder="$(cd "${local.distribution_folder}" && pwd)"
-      cd "${local.ssh_generation_folder}/${each.key}"
+      cd "${local.ssh_generation_folder}/${each.key}/${each.key}"
       
       tar cvzf - . > "$distribution_folder/${each.key}.tar.gz"
     EOT
-    #interpreter = [ "/bin/sh" ]
   }
 }
 
@@ -140,7 +140,7 @@ resource "aws_instance" "cilium-workshop-instance" {
     Instance = each.key
   }
 
-  user_data = file("${path.module}/scripts/init-install.sh")
+  user_data = file("${path.module}/machine-config-scripts/init-install.sh")
   user_data_replace_on_change = true
 
   provisioner "remote-exec" {
@@ -176,3 +176,20 @@ resource null_resource "copy_workspace" {
   }
 }  
     
+resource null_resource "make_sh_script_executable" {
+  depends_on = [ aws_instance.cilium-workshop-instance ]
+  for_each = toset(var.ec2_instances)
+
+  provisioner "remote-exec" {
+    inline = [
+      "find ~/workshop -name '*.sh' -exec chmod +x {} \\;",
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = tls_private_key.private_key[each.key].private_key_openssh
+      host        = "${aws_instance.cilium-workshop-instance[each.key].public_dns}"
+    }
+  }
+}

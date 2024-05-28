@@ -5,9 +5,9 @@ locals {
 
   local_scripts_to_copy = flatten([
     for instance in var.ec2_instances: [
-      for script in fileset("${path.module}/scripts/", "*"): {
+      for script in fileset("${path.module}/connection-scripts/", "**"): {
         key = "${instance}-${script}"
-        content = file("${path.module}/scripts/${script}")
+        content = file("${path.module}/connection-scripts/${script}")
         filename = "${local.ssh_generation_folder}/${instance}/${script}"
       }
     ]
