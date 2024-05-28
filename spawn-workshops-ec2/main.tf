@@ -54,9 +54,9 @@ resource "null_resource" "distribution_tar_gz" {
   provisioner "local-exec" {
     command = <<EOT
       distribution_folder="$(cd "${local.distribution_folder}" && pwd)"
-      cd "${local.ssh_generation_folder}/${each.key}/${each.key}"
-      
-      tar cvzf - . > "$distribution_folder/${each.key}.tar.gz"
+      cd "${local.ssh_generation_folder}/${each.key}"
+      find . -name '*.sh' -exec chmod +x {} \;
+      tar cvzf - . > "$distribution_folder/${each.key}/${each.key}.tar.gz"
     EOT
   }
 }
@@ -177,7 +177,7 @@ resource null_resource "copy_workspace" {
 }  
     
 resource null_resource "make_sh_script_executable" {
-  depends_on = [ aws_instance.cilium-workshop-instance ]
+  depends_on = [ null_resource.copy_workspace ]
   for_each = toset(var.ec2_instances)
 
   provisioner "remote-exec" {
