@@ -87,7 +87,7 @@ clicks: 4
 
 <img class="flex justify-center mt-4rem" src="/sidecar-sweep.png" />
 <div class="flex justify-center" v-after>
-Et si on se débarrasait des sidecars ??
+Et si on se débarrasait de la partie visible ?
 </div>
 
 </v-clicks>
@@ -97,6 +97,36 @@ layout: image
 image: /servicemesh_comparison.png
 backgroundSize: contain
 ---
+
+---
+layout: image
+image: /l4-l7.avif
+backgroundSize: contain
+---
+
+<div class="absolute bottom-0 right-1">
+<p class="text-sky-600">Credit: aurelie vache</p>
+</div>
+
+---
+layout: image
+image: /l4.avif
+backgroundSize: contain
+---
+
+<div class="absolute bottom-0 right-1">
+<p class="text-sky-600">Credit: aurelie vache</p>
+</div>
+
+---
+layout: image
+image: /l7.avif
+backgroundSize: contain
+---
+
+<div class="absolute bottom-0 right-1">
+<p class="text-sky-600">Credit: aurelie vache</p>
+</div>
 
 ---
 layout: image
