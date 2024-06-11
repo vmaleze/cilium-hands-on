@@ -1,2 +1,1 @@
-* Test the labs from beginning to end
-* Validate Slides
+* Remove files from the remote
