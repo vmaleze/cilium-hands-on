@@ -63,6 +63,7 @@ Let's see this with a bigger picture by activating [hubble](https://docs.cilium.
 
 ```bash
 cilium hubble enable --ui
+cilium hubble ui
 ```
 
 <details>

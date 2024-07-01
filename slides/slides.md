@@ -42,20 +42,6 @@ orcImage: /orc-vivien.jpeg
 * <logos-twitter /> <logos-github-octocat />@vmaleze
 
 ---
-title: About Me
-layout: about-me
-hideInToc: true
-speakerName: Manuel Payet
-speakerTitle: Cloud Architect
-speakerImage: 
-speakerCompanyLogo: /ippon.png
----
-
-::details::
-
-* Pro du cloud
-
----
 layout: default
 layout: two-cols
 classRight: col-span-2 overflow-auto
@@ -100,22 +86,18 @@ backgroundSize: contain
 
 ---
 layout: image
-image: /l4-l7.avif
+image: /network-layers.png
 backgroundSize: contain
 ---
-
-<div class="absolute bottom-0 right-1">
-<p class="text-sky-600">Credit: aurelie vache</p>
-</div>
 
 ---
 layout: image
-image: /l4.avif
+image: /l3.png
 backgroundSize: contain
 ---
 
-<div class="absolute bottom-0 right-1">
-<p class="text-sky-600">Credit: aurelie vache</p>
+<div class="absolute top-5 left-5">
+<h1 class="text-sky-600">Layer 3 : Network / IP </h1>
 </div>
 
 ---
@@ -124,10 +106,19 @@ image: /l7.avif
 backgroundSize: contain
 ---
 
+<div class="absolute top-5 left-5">
+<h1 class="text-sky-600">Layer 7 : Application </h1>
+</div>
+
 <div class="absolute bottom-0 right-1">
 <p class="text-sky-600">Credit: aurelie vache</p>
 </div>
 
+---
+layout: image
+image: /cilium-l7.png
+backgroundSize: contain
+---
 ---
 layout: image
 image: /garrosh-work.jpeg
